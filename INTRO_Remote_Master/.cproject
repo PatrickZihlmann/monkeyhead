@@ -122,4 +122,5 @@
 			<resource resourceType="PROJECT" workspacePath="/INTRO_Remote_Master"/>
 		</configuration>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
 </cproject>
