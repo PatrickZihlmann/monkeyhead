@@ -65,12 +65,8 @@ int main(void)
   /*** Processor Expert end of main routine. DON'T MODIFY THIS CODE!!! ***/
   for(;;){
 
-	  LED1_On();
-	  LED1_Off();
-
-
-
-
+LED1_On();
+LED1_Off();
   }
   /*** Processor Expert end of main routine. DON'T WRITE CODE BELOW!!! ***/
 } /*** End of main routine. DO NOT MODIFY THIS TEXT!!! ***/
