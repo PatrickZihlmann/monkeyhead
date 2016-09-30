@@ -23,6 +23,8 @@ void LED_Init(void) {
   LED1_Off();
   LED2_Off();
   LED3_Off();
+
+  LED3_On();
 }
 
 #endif /* PL_CONFIG_HAS_LEDS */
