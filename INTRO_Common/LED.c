@@ -20,8 +20,8 @@ void LED_Deinit(void) {
 }
 
 void LED_Init(void) {
-
-  LED2_On();
+  LED1_Off();
+  LED2_Off();
   LED3_Off();
 }
 
