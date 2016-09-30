@@ -1,7 +1,7 @@
 /* ###################################################################
 **     Filename    : main.c
 **     Project     : INTRO_Remote_Master
-**     Processor   : MK20DX128VLH5
+**     Processor   : MK20DX128VFT5
 **     Version     : Driver 01.01
 **     Compiler    : GNU C Compiler
 **     Date/Time   : 2016-09-20, 21:05, # CodeGen: 0
@@ -30,6 +30,12 @@
 /* Including needed modules to compile this module/procedure */
 #include "Cpu.h"
 #include "Events.h"
+#include "WAIT1.h"
+#include "UTIL1.h"
+#include "KSDK1.h"
+#include "HF1.h"
+#include "CS1.h"
+#include "KIN1.h"
 /* Including shared modules, which are used for whole project */
 #include "PE_Types.h"
 #include "PE_Error.h"

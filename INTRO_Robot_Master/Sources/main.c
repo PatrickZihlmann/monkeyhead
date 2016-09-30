@@ -1,7 +1,7 @@
 /* ###################################################################
 **     Filename    : main.c
 **     Project     : INTRO_Robot_Master
-**     Processor   : MK22FX512VLQ12
+**     Processor   : MK22FX512VLK12
 **     Version     : Driver 01.01
 **     Compiler    : GNU C Compiler
 **     Date/Time   : 2016-09-20, 21:03, # CodeGen: 0
@@ -30,6 +30,10 @@
 /* Including needed modules to compile this module/procedure */
 #include "Cpu.h"
 #include "Events.h"
+#include "SW1.h"
+#include "ExtIntLdd1.h"
+#include "UTIL1.h"
+#include "KSDK1.h"
 /* Including shared modules, which are used for whole project */
 #include "PE_Types.h"
 #include "PE_Error.h"
