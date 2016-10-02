@@ -15,7 +15,7 @@
 #define PL_LOCAL_CONFIG_BOARD_IS_FRDM     (1) /* I'm the FRDM board */
 
 /* platform hardware configuration */
-#define PL_LOCAL_CONFIG_NOF_LEDS          (0) /* number of LEDs, 0 to 3 */
+#define PL_LOCAL_CONFIG_NOF_LEDS          (3) /* number of LEDs, 0 to 3 */
 #define PL_LOCAL_CONFIG_NOF_KEYS          (0) /* number of keys, 0 to 7 */
 
 #if PL_LOCAL_CONFIG_NOF_KEYS>0
