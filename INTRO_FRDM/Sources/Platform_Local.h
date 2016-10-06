@@ -29,7 +29,6 @@
 #endif
 
 /* set of defines to disable a functionality: if it is defined, it will disable it in the common part */
-/* general functionality */
 //#define PL_LOCAL_CONFIG_HAS_LEDS_DISABLED                 /* disable LEDs */
 //#define PL_LOCAL_CONFIG_HAS_EVENTS_DISABLED               /* disable events */
 #define PL_LOCAL_CONFIG_HAS_TIMER_DISABLED                /* disable own timer */
@@ -68,6 +67,5 @@
 #define PL_LOCAL_CONFIG_HAS_LINE_MAZE_DISABLED            /* disable maze solving */
 #define PL_LOCAL_CONFIG_HAS_BLUETOOTH_DISABLED            /* disable Bluetooth */
 #define PL_LOCAL_CONFIG_HAS_BUZZER_DISABLED               /* disable buzzer (only on robot) */
-
 
 #endif /* SOURCES_PLATFORM_LOCAL_H_ */
