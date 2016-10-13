@@ -1,7 +1,7 @@
 /* ###################################################################
 **     Filename    : main.c
 **     Project     : INTRO_Robot_Master
-**     Processor   : MK22FX512VLK12
+**     Processor   : MK22FX512VLQ12
 **     Version     : Driver 01.01
 **     Compiler    : GNU C Compiler
 **     Date/Time   : 2016-09-20, 21:03, # CodeGen: 0
@@ -30,31 +30,38 @@
 /* Including needed modules to compile this module/procedure */
 #include "Cpu.h"
 #include "Events.h"
+#include "LEDPin1.h"
+#include "BitIoLdd1.h"
+#include "LEDPin2.h"
+#include "BitIoLdd2.h"
 #include "SW1.h"
-#include "ExtIntLdd1.h"
-#include "TU_MCP4728.h"
-#include "MCP4728_LDAC.h"
-#include "BitIoLdd20.h"
-#include "MCP4728_RDY.h"
-#include "BitIoLdd21.h"
+#include "BitIoLdd3.h"
+#include "AS1.h"
+#include "ASerialLdd3.h"
 #include "CLS1.h"
-#include "BT1.h"
-#include "Serial2.h"
-#include "ASerialLdd1.h"
-#include "FRTOS1.h"
+#include "TI1.h"
+#include "TimerIntLdd1.h"
+#include "TU1.h"
 #include "RTT1.h"
-#include "KIN1.h"
-#include "UTIL1.h"
 #include "WAIT1.h"
-#include "KSDK1.h"
 #include "CS1.h"
+#include "HF1.h"
+#include "KSDK1.h"
+#include "UTIL1.h"
+#include "KIN1.h"
 /* Including shared modules, which are used for whole project */
 #include "PE_Types.h"
 #include "PE_Error.h"
 #include "PE_Const.h"
 #include "IO_Map.h"
 /* User includes (#include below this line is not maintained by Processor Expert) */
+#include "Application.h"
 
+void delay(void) {
+  volatile unsigned char i;
+
+  for(i=0;i<100;i++);
+}
 /*lint -save  -e970 Disable MISRA rule (6.3) checking. */
 int main(void)
 /*lint -restore Enable MISRA rule (6.3) checking. */
@@ -67,7 +74,14 @@ int main(void)
 
   /* Write your code here */
   /* For example: for(;;) { } */
+  APP_Start();
+#if 0
+  Bit1_ClrVal();
+  Bit1_SetVal();
 
+  Bit2_ClrVal();
+  Bit2_SetVal();
+#endif
   /*** Don't write any code pass this line, or it will be deleted during code generation. ***/
   /*** RTOS startup code. Macro PEX_RTOS_START is defined by the RTOS component. DON'T MODIFY THIS CODE!!! ***/
   #ifdef PEX_RTOS_START
