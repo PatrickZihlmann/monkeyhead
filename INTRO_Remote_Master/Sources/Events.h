@@ -35,6 +35,9 @@
 #include "IO_Map.h"
 #include "LEDPin1.h"
 #include "BitIoLdd17.h"
+#include "WAIT1.h"
+#include "UTIL1.h"
+#include "KIN1.h"
 #include "TI1.h"
 #include "TimerIntLdd1.h"
 #include "TU1.h"
@@ -59,12 +62,9 @@
 #include "PTA.h"
 #include "PTB.h"
 #include "PTD.h"
-#include "WAIT1.h"
-#include "UTIL1.h"
 #include "KSDK1.h"
 #include "HF1.h"
 #include "CS1.h"
-#include "KIN1.h"
 
 #ifdef __cplusplus
 extern "C" {

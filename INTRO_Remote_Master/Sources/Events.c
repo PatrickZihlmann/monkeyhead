@@ -35,7 +35,7 @@ extern "C" {
 
 
 /* User includes (#include below this line is not maintained by Processor Expert) */
-
+#include "Timer.h"
 /*
 ** ===================================================================
 **     Event       :  Cpu_OnNMIINT (module Events)
@@ -70,8 +70,7 @@ void Cpu_OnNMIINT(void)
 */
 void TI1_OnInterrupt(void)
 {
-	TI1_OnInterrupt();
-  /* Write your code here ... */
+  TMR_OnInterrupt();
 }
 
 /* END Events */
