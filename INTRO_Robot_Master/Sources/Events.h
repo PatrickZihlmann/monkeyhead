@@ -33,23 +33,25 @@
 #include "PE_Error.h"
 #include "PE_Const.h"
 #include "IO_Map.h"
+#include "LEDPin1.h"
+#include "BitIoLdd1.h"
+#include "LEDPin2.h"
+#include "BitIoLdd2.h"
 #include "SW1.h"
-#include "ExtIntLdd1.h"
-#include "TU_MCP4728.h"
-#include "MCP4728_LDAC.h"
-#include "BitIoLdd20.h"
-#include "MCP4728_RDY.h"
-#include "BitIoLdd21.h"
+#include "BitIoLdd3.h"
 #include "CLS1.h"
-#include "BT1.h"
-#include "Serial2.h"
-#include "ASerialLdd1.h"
 #include "FRTOS1.h"
+#include "TI1.h"
+#include "TimerIntLdd1.h"
+#include "TU1.h"
 #include "RTT1.h"
+#include "BUZ1.h"
+#include "BitIoLdd4.h"
 #include "KIN1.h"
 #include "UTIL1.h"
 #include "WAIT1.h"
 #include "KSDK1.h"
+#include "HF1.h"
 #include "CS1.h"
 
 #ifdef __cplusplus
@@ -72,20 +74,6 @@ extern "C" {
 void Cpu_OnNMIINT(void);
 
 
-void SW1_OnInterrupt(void);
-/*
-** ===================================================================
-**     Event       :  SW1_OnInterrupt (module Events)
-**
-**     Component   :  SW1 [ExtInt]
-**     Description :
-**         This event is called when an active signal edge/level has
-**         occurred.
-**     Parameters  : None
-**     Returns     : Nothing
-** ===================================================================
-*/
-
 void FRTOS1_vApplicationStackOverflowHook(TaskHandle_t pxTask, char *pcTaskName);
 /*
 ** ===================================================================
@@ -102,6 +90,36 @@ void FRTOS1_vApplicationStackOverflowHook(TaskHandle_t pxTask, char *pcTaskName)
 **     Returns     : Nothing
 ** ===================================================================
 */
+
+void FRTOS1_vApplicationMallocFailedHook(void);
+/*
+** ===================================================================
+**     Event       :  FRTOS1_vApplicationMallocFailedHook (module Events)
+**
+**     Component   :  FRTOS1 [FreeRTOS]
+**     Description :
+**         If enabled, the RTOS will call this hook in case memory
+**         allocation failed.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+
+/*
+** ===================================================================
+**     Event       :  TI1_OnInterrupt (module Events)
+**
+**     Component   :  TI1 [TimerInt]
+**     Description :
+**         When a timer interrupt occurs this event is called (only
+**         when the component is enabled - <Enable> and the events are
+**         enabled - <EnableEvent>). This event is enabled only if a
+**         <interrupt service/event> is enabled.
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+void TI1_OnInterrupt(void);
 
 void FRTOS1_vApplicationTickHook(void);
 /*
@@ -126,20 +144,6 @@ void FRTOS1_vApplicationIdleHook(void);
 **     Description :
 **         If enabled, this hook will be called when the RTOS is idle.
 **         This might be a good place to go into low power mode.
-**     Parameters  : None
-**     Returns     : Nothing
-** ===================================================================
-*/
-
-void FRTOS1_vApplicationMallocFailedHook(void);
-/*
-** ===================================================================
-**     Event       :  FRTOS1_vApplicationMallocFailedHook (module Events)
-**
-**     Component   :  FRTOS1 [FreeRTOS]
-**     Description :
-**         If enabled, the RTOS will call this hook in case memory
-**         allocation failed.
 **     Parameters  : None
 **     Returns     : Nothing
 ** ===================================================================

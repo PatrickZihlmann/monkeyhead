@@ -29,12 +29,18 @@ static EVNT_MemUnit EVNT_Events[((EVNT_NOF_EVENTS-1)/EVNT_MEM_UNIT_NOF_BITS)+1];
 
 void EVNT_SetEvent(EVNT_Handle event) {
   /* \todo Make it reentrant */
+  CS1_CriticalVariable();
+  CS1_EnterCritical();
   SET_EVENT(event);
+  CS1_ExitCritical();
 }
 
 void EVNT_ClearEvent(EVNT_Handle event) {
   /* \todo Make it reentrant */
+  CS1_CriticalVariable();
+  CS1_EnterCritical();
   CLR_EVENT(event);
+  CS1_ExitCritical();
 }
 
 bool EVNT_EventIsSet(EVNT_Handle event) {
