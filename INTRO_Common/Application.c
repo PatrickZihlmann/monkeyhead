@@ -13,6 +13,7 @@
 #include "WAIT1.h"
 #include "CS1.h"
 #include "Keys.h"
+#include "KeyDebounce.h"
 #include "KIN1.h"
 #if PL_CONFIG_HAS_SHELL
   #include "CLS1.h"
@@ -60,8 +61,8 @@ void APP_EventHandler(EVNT_Handle event) {
   #if PL_CONFIG_NOF_KEYS>=1
   case EVNT_SW1_PRESSED:
     LED1_Neg();
-    CLS1_SendStr("SW1 pressed\r\n", CLS1_GetStdio()->stdOut);
-    //SHELL_SendString("SW1 pressed\r\n");
+    //CLS1_SendStr("SW1 pressed\r\n", CLS1_GetStdio()->stdOut);
+    SHELL_SendString("SW1 pressed\r\n");
     #if PL_CONFIG_HAS_BUZZER
     BUZ_PlayTune(BUZ_TUNE_BUTTON);
     #endif
@@ -188,7 +189,11 @@ void APP_Start(void) {
   //EVNT_SetEvent(EVNT_STARTUP);
   for(;;) {
 #if PL_CONFIG_HAS_KEYS
+  #if PL_CONFIG_HAS_DEBOUNCE
+    KEYDBNC_Process();
+  #else
     KEY_Scan();
+  #endif
 #endif
 #if PL_CONFIG_HAS_EVENTS
     EVNT_HandleEvent(APP_EventHandler, TRUE);
@@ -197,7 +202,7 @@ void APP_Start(void) {
    //LED2_On();
    //LED3_On();
   // Critical();
-    WAIT1_Waitms(50); /* just wait for some arbitrary time .... */
+    //WAIT1_Waitms(25); /* just wait for some arbitrary time .... */
     //LED1_Off();
     //LED2_Off();
     //WAIT1_Waitms(25); /* just wait for some arbitrary time .... */
