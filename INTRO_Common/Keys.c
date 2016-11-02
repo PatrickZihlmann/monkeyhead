@@ -174,7 +174,6 @@ void KEY_OnInterrupt(KEY_Buttons button) {
 
 /*! \brief Key driver initialization */
 void KEY_Init(void) {
-
 #if PL_CONFIG_BOARD_IS_ROBO_V2
   /* enable and turn on pull-up resistor for PTA14 */
   PORT_PDD_SetPinPullSelect(PORTA_BASE_PTR, 14, PORT_PDD_PULL_UP);
