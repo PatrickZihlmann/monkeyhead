@@ -17,6 +17,7 @@
 #include "KIN1.h"
 #if PL_CONFIG_HAS_SHELL
   #include "CLS1.h"
+  #include "Shell.h"
 #endif
 #if PL_CONFIG_HAS_BUZZER
   #include "Buzzer.h"
@@ -24,9 +25,6 @@
 #if PL_CONFIG_HAS_RTOS
   #include "FRTOS1.h"
   #include "RTOS.h"
-#endif
-#if PL_CONFIG_HAS_SHELL
-  #include "Shell.h"
 #endif
 #if PL_CONFIG_HAS_QUADRATURE
   #include "Q4CLeft.h"
