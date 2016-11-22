@@ -61,7 +61,7 @@ typedef struct SensorFctType_ {
 } SensorFctType;
 
 typedef uint16_t SensorTimeType;
-#define MAX_SENSOR_VALUE  ((SensorTimeType)-1)
+#define MAX_SENSOR_VALUE  20000 //((SensorTimeType)-1)
 
 /* calibration min/max values */
 typedef struct SensorCalibT_ {
@@ -190,7 +190,6 @@ static void REF_MeasureRaw(SensorTimeType raw[REF_NOF_SENSORS]) {
 	uint8_t i;
 	RefCnt_TValueType timerVal;
 	/*! \todo Consider reentrancy and mutual exclusion! */
-	CS1_CriticalVariable()
 
 
 	if (FRTOS1_xSemaphoreTake(MeasureMutex, 0) == pdTRUE) {
@@ -204,7 +203,6 @@ static void REF_MeasureRaw(SensorTimeType raw[REF_NOF_SENSORS]) {
 		}
 		WAIT1_Waitus(50); /* give at least 10 us to charge the capacitor */
 
-		CS1_EnterCritical(); /* entering critical section interrups would distort time measurement*/
 		for (i = 0; i < REF_NOF_SENSORS; i++) {
 			SensorFctArray[i].SetInput(); /* turn I/O line as input */
 		}
@@ -215,20 +213,13 @@ static void REF_MeasureRaw(SensorTimeType raw[REF_NOF_SENSORS]) {
 			for (i = 0; i < REF_NOF_SENSORS; i++) {
 				if (raw[i] == MAX_SENSOR_VALUE ) { /* not measured yet? */
 					if (SensorFctArray[i].GetVal() == 0) {
-						raw[i] = timerVal;
-
-					} else {
-						if(timerVal >= 0xFF78){ /*timout handling*/
-						raw[i] = MAX_SENSOR_VALUE - 1; /*SensorCalibMinMax.maxVal[i];*/
-					}
+						raw[i] = (int16_t)timerVal;
 					}
 				} else { /* have value */
 					cnt++;
 				}
 			}
-		} while (cnt != REF_NOF_SENSORS);
-		CS1_ExitCritical()
-		;
+		} while (cnt != REF_NOF_SENSORS && timerVal < 0x32C8);
 
 		LED_IR_Off(); /* IR LED's off */
 		FRTOS1_xSemaphoreGive(MeasureMutex);
@@ -689,6 +680,9 @@ void REF_Init(void) {
 #if REF_START_STOP_CALIB
 	FRTOS1_vSemaphoreCreateBinary(REF_StartStopSem);
 	MeasureMutex = FRTOS1_xSemaphoreCreateMutex();
+	if(MeasureMutex == NULL){
+		for(;;);
+		}/*error*/
 	FRTOS1_xSemaphoreGive(MeasureMutex);
 	if (REF_StartStopSem == NULL) { /* semaphore creation failed */
 		for (;;) {
@@ -696,6 +690,7 @@ void REF_Init(void) {
 	}
 	(void) FRTOS1_xSemaphoreTake(REF_StartStopSem, 0); /* empty token */
 	FRTOS1_vQueueAddToRegistry(REF_StartStopSem, "RefStartStopSem");
+	FRTOS1_vQueueAddToRegistry(MeasureMutex, "RefMutex");
 #endif
 	refState = REF_STATE_INIT;
 	timerHandle = RefCnt_Init(NULL);
