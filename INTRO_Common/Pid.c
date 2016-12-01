@@ -243,7 +243,8 @@ static void PID_PrintHelp(const CLS1_StdIOType *io) {
   CLS1_SendHelpStr((unsigned char*)"  speed (L|R) (p|d|i|w) <val>", (unsigned char*)"Sets P, D, I or anti-windup position value\r\n", io->stdOut);
   CLS1_SendHelpStr((unsigned char*)"  speed (L|R) speed <value>", (unsigned char*)"Maximum speed % value\r\n", io->stdOut);
   CLS1_SendHelpStr((unsigned char*)"  pos (L|R) (p|d|i|w) <val>", (unsigned char*)"Sets P, D, I or anti-windup position value\r\n", io->stdOut);
-  CLS1_SendHelpStr((unsigned char*)"  pos speed <value>", (unsigned char*)"Maximum speed % value\r\n", io->stdOut);
+  CLS1_SendHelpStr((unsigned char*)"  pos (L|R) speed <value>", (unsigned char*)"Maximum speed % value\r\n", io->stdOut);
+  CLS1_SendHelpStr((unsigned char*)"  pos (p|d|i|w) <val>", (unsigned char*)"Sets P, D, I or anti-windup position value\r\n", io->stdOut);
   CLS1_SendHelpStr((unsigned char*)"  fw (p|i|d|w) <value>", (unsigned char*)"Sets P, I, D or anti-Windup line value\r\n", io->stdOut);
   CLS1_SendHelpStr((unsigned char*)"  fw speed <value>", (unsigned char*)"Maximum speed % value\r\n", io->stdOut);
 }
@@ -371,9 +372,12 @@ uint8_t PID_ParseCommand(const unsigned char *cmd, bool *handled, const CLS1_Std
   } else if (UTIL1_strncmp((char*)cmd, (char*)"pid speed R ", sizeof("pid speed R ")-1)==0) {
     res = ParsePidParameter(&speedRightConfig, cmd+sizeof("pid speed R ")-1, handled, io);
   } else if (UTIL1_strncmp((char*)cmd, (char*)"pid pos L ", sizeof("pid pos L ")-1)==0) {
-    res = ParsePidParameter(&speedLeftConfig, cmd+sizeof("pid pos L ")-1, handled, io);
+    res = ParsePidParameter(&posLeftConfig, cmd+sizeof("pid pos L ")-1, handled, io);
   } else if (UTIL1_strncmp((char*)cmd, (char*)"pid pos R ", sizeof("pid pos R ")-1)==0) {
-    res = ParsePidParameter(&speedRightConfig, cmd+sizeof("pid pos R ")-1, handled, io);
+    res = ParsePidParameter(&posRightConfig, cmd+sizeof("pid pos R ")-1, handled, io);
+  } else if (UTIL1_strncmp((char*)cmd, (char*)"pid pos ", sizeof("pid pos ")-1)==0) {
+    res = ParsePidParameter(&posRightConfig, cmd+sizeof("pid pos ")-1, handled, io);
+    res = ParsePidParameter(&posLeftConfig, cmd+sizeof("pid pos ")-1, handled, io);
   } else if (UTIL1_strncmp((char*)cmd, (char*)"pid fw ", sizeof("pid fw ")-1)==0) {
     res = ParsePidParameter(&lineFwConfig, cmd+sizeof("pid fw ")-1, handled, io);
   }
@@ -402,33 +406,33 @@ void PID_Deinit(void) {
 
 void PID_Init(void) {
   /*! \todo determine your PID values */
-  speedLeftConfig.pFactor100 = 0;
-  speedLeftConfig.iFactor100 = 0;
+  speedLeftConfig.pFactor100 = 2600;
+  speedLeftConfig.iFactor100 = 100;
   speedLeftConfig.dFactor100 = 0;
-  speedLeftConfig.iAntiWindup = 0;
+  speedLeftConfig.iAntiWindup = 50000;
   speedLeftConfig.lastError = 0;
   speedLeftConfig.integral = 0;
 
-  speedRightConfig.pFactor100 = 0;
-  speedRightConfig.iFactor100 = 0;
+  speedRightConfig.pFactor100 = 2600;
+  speedRightConfig.iFactor100 = 100;
   speedRightConfig.dFactor100 = 0;
-  speedRightConfig.iAntiWindup = 0;
+  speedRightConfig.iAntiWindup = 50000;
   speedRightConfig.lastError = 0;
   speedRightConfig.integral = 0;
 
-  lineFwConfig.pFactor100 = 0;
-  lineFwConfig.iFactor100 = 0;
+  lineFwConfig.pFactor100 = 1000;
+  lineFwConfig.iFactor100 = 1;
   lineFwConfig.dFactor100 = 0;
-  lineFwConfig.iAntiWindup = 0;
-  lineFwConfig.maxSpeedPercent = 0;
+  lineFwConfig.iAntiWindup = 40000;
+  lineFwConfig.maxSpeedPercent = 60;
   lineFwConfig.lastError = 0;
   lineFwConfig.integral = 0;
 
-  posLeftConfig.pFactor100 = 0;
-  posLeftConfig.iFactor100 = 0;
+  posLeftConfig.pFactor100 = 60;
+  posLeftConfig.iFactor100 = 1;
   posLeftConfig.dFactor100 = 0;
-  posLeftConfig.iAntiWindup = 0;
-  posLeftConfig.maxSpeedPercent = 0;
+  posLeftConfig.iAntiWindup = 2000;
+  posLeftConfig.maxSpeedPercent = 30;
   posLeftConfig.lastError = 0;
   posLeftConfig.integral = 0;
   posRightConfig.pFactor100 = posLeftConfig.pFactor100;
