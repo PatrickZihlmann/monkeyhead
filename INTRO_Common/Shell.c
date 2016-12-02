@@ -77,6 +77,11 @@
 #if PL_CONFIG_HAS_USB_CDC
   #include "CDC1.h"
 #endif
+#if RNET_CONFIG_REMOTE_STDIO
+  #include "RStdIO.h"
+#endif
+
+
 #include "KIN1.h"
 
 #define SHELL_HANDLER_ARRAY   1
@@ -283,6 +288,12 @@ static void ShellTask(void *pvParameters) {
 #endif
   /* \todo Extend as needed */
 
+#if RNET_CONFIG_REMOTE_STDIO
+  static unsigned char radio_cmd_buf[48];
+  radio_cmd_buf[0] = '\0';
+  CLS1_ConstStdIOType *ioRemote = RSTDIO_GetStdioRx();
+#endif
+
   (void)pvParameters; /* not used */
 #if SHELL_HANDLER_ARRAY
   /* initialize buffers */
@@ -301,6 +312,14 @@ static void ShellTask(void *pvParameters) {
       (void)CLS1_ReadAndParseWithCommandTable(ios[i].buf, ios[i].bufSize, ios[i].stdio, CmdParserTable);
     }
 #endif
+
+#if RNET_CONFIG_REMOTE_STDIO
+    RSTDIO_Print(ioRemote); /* dispatch incoming messages and send them to local standard */
+	(void)CLS1_ReadAndParseWithCommandTable(radio_cmd_buf, sizeof(radio_cmd_buf), ioRemote, CmdParserTable);
+#endif
+
+
+
 #if PL_CONFIG_HAS_SHELL_QUEUE
 #if PL_CONFIG_SQUEUE_SINGLE_CHAR
     {
