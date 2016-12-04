@@ -91,28 +91,31 @@ static void StateMachine(void) {
       break;
     case STATE_FOLLOW_SEGMENT:
       if (!FollowSegment()) {
-    #if PL_CONFIG_HAS_LINE_MAZE
-        LF_currState = STATE_TURN; /* make turn */
-        SHELL_SendString((unsigned char*)"no line, turn..\r\n");
-    #else
-        LF_currState = STATE_STOP; /* stop if we do not have a line any more */
-        SHELL_SendString((unsigned char*)"No line, stopped!\r\n");
-    #endif
+    	  if(REF_GetLineKind() == REF_LINE_NONE){
+    		 /*keine linie -> turn*/
+    		  LF_currState = STATE_TURN; /* make turn */
+    		  SHELL_SendString((unsigned char*)"no line, turn..\r\n");
+    	  }else if(REF_GetLineKind() == REF_LINE_FULL){
+    		  /*alles Schwarz -> stopp ende*/
+    		  LF_currState = STATE_FINISHED; /* stop if we do not have a line any more */
+    		  SHELL_SendString((unsigned char*)"No line, stopped!\r\n");
+    	  }
       }
       break;
 
     case STATE_TURN:
-      #if PL_CONFIG_HAS_LINE_MAZE
-      /*! \todo Handle maze turning */
-      #endif /* PL_CONFIG_HAS_LINE_MAZE */
+    	TURN_Turn(TURN_RIGHT180, NULL);
+    	WAIT1_WaitOSms(2000);
+    	(void)xTaskNotify(LFTaskHandle, LF_START_FOLLOWING, eSetBits);
+    	LF_currState = STATE_FOLLOW_SEGMENT;
       break;
 
     case STATE_FINISHED:
-      #if PL_CONFIG_HAS_LINE_MAZE
-      /*! \todo Handle maze finished */
-      #endif /* PL_CONFIG_HAS_LINE_MAZE */
+    	(void)xTaskNotify(LFTaskHandle, LF_STOP_FOLLOWING, eSetBits);
+    	LF_currState = STATE_STOP;
       break;
     case STATE_STOP:
+
       SHELL_SendString("Stopped!\r\n");
 #if PL_CONFIG_HAS_TURN
       TURN_Turn(TURN_STOP, NULL);

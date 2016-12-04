@@ -207,7 +207,7 @@ void PTRC1_OnTraceWrap(void)
 */
 void QuadInt_OnInterrupt(void)
 {
-#if configUSE_SEGGER_SYSTEM_VIEWER_HOOKS
+#if 0 && configUSE_SEGGER_SYSTEM_VIEWER_HOOKS
   //SEGGER_SYSVIEW_OnUserStart(0);
   SYS1_RecordEnterISR(); /* cannot use this, as it would use RTOS API calls above max syscall level! */
 #endif
@@ -215,7 +215,7 @@ void QuadInt_OnInterrupt(void)
   Q4CLeft_Sample();
   Q4CRight_Sample();
 #endif
-#if configUSE_SEGGER_SYSTEM_VIEWER_HOOKS
+#if 0 && configUSE_SEGGER_SYSTEM_VIEWER_HOOKS
   //SEGGER_SYSVIEW_OnUserStop(0);
   SYS1_RecordExitISR();
 #endif
