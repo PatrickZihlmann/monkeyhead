@@ -105,7 +105,6 @@ static void StateMachine(void) {
 
     case STATE_TURN:
     	TURN_Turn(TURN_RIGHT180, NULL);
-    	WAIT1_WaitOSms(2000);
     	(void)xTaskNotify(LFTaskHandle, LF_START_FOLLOWING, eSetBits);
     	LF_currState = STATE_FOLLOW_SEGMENT;
       break;
