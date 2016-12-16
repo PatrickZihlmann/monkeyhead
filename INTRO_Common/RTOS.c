@@ -43,7 +43,7 @@ static void AppTask(void *param) {
     #if PL_CONFIG_HAS_EVENTS
       EVNT_HandleEvent(APP_EventHandler, TRUE);
     #endif
-    FRTOS1_vTaskDelay(pdMS_TO_TICKS(10));
+    FRTOS1_vTaskDelay(pdMS_TO_TICKS(50));
   }
 }
 
