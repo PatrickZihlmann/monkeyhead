@@ -30,6 +30,10 @@
 #if PL_CONFIG_HAS_LINE_MAZE
   #include "Maze.h"
 #endif
+#if PL_CONFIG_HAS_RADIO
+  #include "RNet_App.h"
+  #include "RNet_AppConfig.h"
+#endif
 
 typedef enum {
   STATE_IDLE,              /* idle, not doing anything */
@@ -97,6 +101,10 @@ static void StateMachine(void) {
     		  SHELL_SendString((unsigned char*)"no line, turn..\r\n");
     	  }else if(REF_GetLineKind() == REF_LINE_FULL){
     		  /*alles Schwarz -> stopp ende*/
+    		  byte send[2];
+    		  send[0] = 0x5;
+    		  send[1] = 'C';
+    		  (void)RAPP_SendPayloadDataBlock(send, sizeof(send), 0xAC, 0x12, RPHY_PACKET_FLAGS_REQ_ACK);
     		  LF_currState = STATE_FINISHED; /* stop if we do not have a line any more */
     		  SHELL_SendString((unsigned char*)"No line, stopped!\r\n");
     	  }

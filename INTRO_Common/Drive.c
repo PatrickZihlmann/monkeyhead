@@ -360,7 +360,7 @@ void DRV_Deinit(void) {
 }
 
 void DRV_Init(void) {
-  DRV_Status.mode = DRV_MODE_NONE;
+  DRV_Status.mode = DRV_MODE_SPEED;
   DRV_Status.speed.left = 0;
   DRV_Status.speed.right = 0;
   DRV_Status.pos.left = 0;

@@ -43,7 +43,7 @@ static bool REMOTE_useJoystick = TRUE;
 static uint16_t midPointX, midPointY;
 #endif
 
-#if PL_CONFIG_CONTROL_SENDER
+#if PL_CONFIG_CONTROL_SENDER && PL_CONFIG_HAS_JOYSTICK
 static int8_t ToSigned8Bit(uint16_t val, bool isX) {
   int32_t tmp;
 
@@ -94,6 +94,8 @@ static uint8_t REMOTE_GetXY(uint16_t *x, uint16_t *y, int8_t *x8, int8_t *y8) {
   return ERR_OK;
 }
 
+#endif
+#if PL_CONFIG_CONTROL_SENDER
 static void RemoteTask (void *pvParameters) {
   (void)pvParameters;
 #if PL_CONFIG_HAS_JOYSTICK
@@ -277,6 +279,9 @@ uint8_t REMOTE_HandleRemoteRxMessage(RAPP_MSG_Type type, uint8_t size, uint8_t *
 #endif
     case RAPP_MSG_TYPE_JOYSTICK_BTN:
       *handled = TRUE;
+      static int speedcontroller = 2080;
+      static bool startsignal = true;
+      static byte send[2];
       val = *data; /* get data value */
 #if PL_CONFIG_HAS_SHELL && PL_CONFIG_HAS_BUZZER && PL_CONFIG_HAS_REMOTE
       if (val=='F') { /* F button, disable remote */
@@ -293,7 +298,39 @@ uint8_t REMOTE_HandleRemoteRxMessage(RAPP_MSG_Type type, uint8_t size, uint8_t *
         /*! \todo add functionality */
       } else if (val=='A') { /* green 'A' button */
         /*! \todo add functionality */
+      } else if (val==0x00) {
+    	  if (startsignal) {
+    		  startsignal = false;
+    		  send[0] = 0x5;
+    		  send[1] = 'A';
+    		  (void)RAPP_SendPayloadDataBlock(send, sizeof(send), 0xAC, 0x12, RPHY_PACKET_FLAGS_REQ_ACK);
+    	  }
+    	  DRV_SetSpeed(0,0); /* turn off motors */
+      } else if (val==0x07) { /* drive forward */
+    	  DRV_SetSpeed(-speedcontroller,-speedcontroller);
+    	  SHELL_SendString("drive\r\n");
+      } else if (val==0x06) { /* drive backward */
+    	  DRV_SetSpeed(speedcontroller,speedcontroller);
+      } else if (val==0x01) { /* turn right */
+    	  DRV_SetSpeed(speedcontroller/2,-speedcontroller/2);
+      } else if (val==0x02) {  /* turn left */
+    	  DRV_SetSpeed(-speedcontroller/2,speedcontroller/2);
+      } else if (val==0x05) {  /* faster */
+    	  if (speedcontroller < 6000) {
+    	  speedcontroller = speedcontroller + 280;
+    	  }
+      } else if (val==0x03) {  /* slower */
+    	  if (speedcontroller > 400) {
+    	  speedcontroller = speedcontroller - 280;
+    	  }
+      } else if (val==0x04) { /* line follower */
+    	  if (DRV_GetMode() == DRV_MODE_SPEED) {
+    		  LF_StartStopFollowing();
+    		  send[1] = 'B';
+    		  (void)RAPP_SendPayloadDataBlock(send, sizeof(send), 0xAC, 0x12, RPHY_PACKET_FLAGS_REQ_ACK);
+    	  }
       }
+
 #else
       *handled = FALSE; /* no shell and no buzzer? */
 #endif
