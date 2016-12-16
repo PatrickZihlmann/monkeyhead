@@ -31,6 +31,8 @@
 #endif
 #if PL_CONFIG_HAS_JOYSTICK
   #include "AD1.h"
+#else
+	#include "Keys.h"
 #endif
 #if PL_CONFIG_HAS_SHELL
   #include "Shell.h"
@@ -95,6 +97,11 @@ static uint8_t REMOTE_GetXY(uint16_t *x, uint16_t *y, int8_t *x8, int8_t *y8) {
 }
 
 #endif
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> origin/master
 #if PL_CONFIG_CONTROL_SENDER
 static void RemoteTask (void *pvParameters) {
   (void)pvParameters;
@@ -134,7 +141,29 @@ static void RemoteTask (void *pvParameters) {
         LED1_Neg();
       }
 #endif
-      FRTOS1_vTaskDelay(200/portTICK_PERIOD_MS);
+      uint8_t data = 0x00;
+
+     if (KEY1_Get()) {
+    	 data = 0x01;
+     }else if(KEY2_Get()){
+    	 data = 0x02;
+     }else if(KEY3_Get()){
+    	 data = 0x03;
+     }else if(KEY4_Get()){
+    	 data = 0x04;
+     }else if(KEY5_Get()){
+    	 data = 0x05;
+     }else if(KEY6_Get()){
+    	 data = 0x06;
+     }else if(KEY7_Get()){
+    	 data = 0x07;
+     }
+
+     (void)RAPP_SendPayloadDataBlock(&data, sizeof(data), RAPP_MSG_TYPE_JOYSTICK_BTN, RNETA_GetDestAddr(), RPHY_PACKET_FLAGS_REQ_ACK);
+     LED1_Neg();
+
+
+      FRTOS1_vTaskDelay(100/portTICK_PERIOD_MS);
     } else {
       FRTOS1_vTaskDelay(1000/portTICK_PERIOD_MS);
     }
