@@ -49,6 +49,7 @@ typedef enum {
 
 static volatile StateType LF_currState = STATE_IDLE;
 static xTaskHandle LFTaskHandle;
+static bool alreadyturned = false;
 #if PL_CONFIG_HAS_LINE_MAZE
   static uint8_t LF_solvedIdx = 0; /*  index to iterate through the solution, zero is the solution start index */
 #endif
@@ -83,6 +84,7 @@ static bool FollowSegment(void) {
   currLineKind = REF_GetLineKind();
   if (currLineKind==REF_LINE_STRAIGHT) {
     PID_Line(currLine, REF_MIDDLE_LINE_VALUE); /* move along the line */
+    alreadyturned = false;
     return TRUE;
   } else {
     return FALSE; /* intersection/change of direction or not on line any more */
@@ -112,7 +114,10 @@ static void StateMachine(void) {
       break;
 
     case STATE_TURN:
-    	TURN_Turn(TURN_RIGHT180, NULL);
+    	if(alreadyturned == false){
+    		alreadyturned = true;
+    		TURN_Turn(TURN_RIGHT180, NULL);
+    	}
     	(void)xTaskNotify(LFTaskHandle, LF_START_FOLLOWING, eSetBits);
     	LF_currState = STATE_FOLLOW_SEGMENT;
       break;
