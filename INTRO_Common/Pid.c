@@ -190,7 +190,7 @@ static void PID_PosCfg(int32_t currPos, int32_t setPos, bool isLeft, PID_Config 
   MOT_Direction direction=MOT_DIR_FORWARD;
   MOT_MotorDevice *motHandle;
   int error;
-  #define POS_FILTER 5
+  #define POS_FILTER 10
 
   error = setPos-currPos;
   if (error>-POS_FILTER && error<POS_FILTER) { /* avoid jitter around zero */
@@ -427,14 +427,14 @@ void PID_Init(void) {
   lineFwConfig.iFactor100 = 1;
   lineFwConfig.dFactor100 = 0;
   lineFwConfig.iAntiWindup = 40000;
-  lineFwConfig.maxSpeedPercent = 40;
+  lineFwConfig.maxSpeedPercent = 65; /*40 is working fine*/
   lineFwConfig.lastError = 0;
   lineFwConfig.integral = 0;
 
   posLeftConfig.pFactor100 = 60;
-  posLeftConfig.iFactor100 = 1;
+  posLeftConfig.iFactor100 = 2;
   posLeftConfig.dFactor100 = 0;
-  posLeftConfig.iAntiWindup = 2000;
+  posLeftConfig.iAntiWindup = 500;
   posLeftConfig.maxSpeedPercent = 80;
   posLeftConfig.lastError = 0;
   posLeftConfig.integral = 0;

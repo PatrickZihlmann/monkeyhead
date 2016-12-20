@@ -306,8 +306,9 @@ uint8_t REMOTE_HandleRemoteRxMessage(RAPP_MSG_Type type, uint8_t size, uint8_t *
     case RAPP_MSG_TYPE_JOYSTICK_BTN:
       *handled = TRUE;
       static int speedcontroller = 6000;
-      static bool startsignal = true;
+      static bool aSended = false;
       static bool tmpbool = false;
+      static bool bSended = false;
       static byte send[2];
       val = *data; /* get data value */
 #if PL_CONFIG_HAS_SHELL && PL_CONFIG_HAS_BUZZER && PL_CONFIG_HAS_REMOTE
@@ -332,10 +333,11 @@ uint8_t REMOTE_HandleRemoteRxMessage(RAPP_MSG_Type type, uint8_t size, uint8_t *
       } else if (val==0x07) { /* drive forward */
     	  DRV_SetSpeed(-speedcontroller,-speedcontroller);
     	  SHELL_SendString("drive\r\n");
-    	  if (startsignal) {
-    	     startsignal = false;
-    	     send[0] = 0x5;
+    	  if (!aSended) {
+    	     aSended = true;
+    	     send[0] = 0x05;
     	     send[1] = 'A';
+    	     SHELL_SendString("Send data A (start) \r\n");
     	     (void)RAPP_SendPayloadDataBlock(send, sizeof(send), 0xAC, 0x12, RPHY_PACKET_FLAGS_REQ_ACK);
     	     }
       } else if (val==0x06) { /* drive backward */
@@ -362,8 +364,12 @@ uint8_t REMOTE_HandleRemoteRxMessage(RAPP_MSG_Type type, uint8_t size, uint8_t *
     	  }
       } else if (val==0x04) { /* line follower */
     	  if (DRV_GetMode() == DRV_MODE_SPEED && tmpbool == false) {
-    		  send[1] = 'B';
-    		  (void)RAPP_SendPayloadDataBlock(send, sizeof(send), 0xAC, 0x12, RPHY_PACKET_FLAGS_REQ_ACK);
+    		  if(!bSended){
+    			  send[1] = 'B';
+    			  (void)RAPP_SendPayloadDataBlock(send, sizeof(send), 0xAC, 0x12, RPHY_PACKET_FLAGS_REQ_ACK);
+    			  SHELL_SendString("Send data B (start Linefollow) \r\n");
+    			  bSended = true;
+    		  }
     		  LF_StartFollowing();
     		  tmpbool = true;
     		  } else if(DRV_GetMode() == DRV_MODE_NONE && tmpbool == false){

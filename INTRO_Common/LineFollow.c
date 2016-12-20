@@ -92,6 +92,7 @@ static bool FollowSegment(void) {
 }
 
 static void StateMachine(void) {
+	static bool cSended = false;
   switch (LF_currState) {
     case STATE_IDLE:
       break;
@@ -99,14 +100,21 @@ static void StateMachine(void) {
       if (!FollowSegment()) {
     	  if(REF_GetLineKind() == REF_LINE_NONE){
     		 /*keine linie -> turn*/
-    		  LF_currState = STATE_TURN; /* make turn */
-    		  SHELL_SendString((unsigned char*)"no line, turn..\r\n");
+    		  if(alreadyturned == false){
+    			  alreadyturned = true;
+    			  LF_currState = STATE_TURN; /* make turn */
+    			  SHELL_SendString((unsigned char*)"no line, turn..\r\n");
+    		  }
     	  }else if(REF_GetLineKind() == REF_LINE_FULL){
     		  /*alles Schwarz -> stopp ende*/
-    		  byte send[2];
-    		  send[0] = 0x5;
-    		  send[1] = 'C';
-    		  (void)RAPP_SendPayloadDataBlock(send, sizeof(send), 0xAC, 0x12, RPHY_PACKET_FLAGS_REQ_ACK);
+    		  if(!cSended){
+    			  byte send[2];
+    			  send[0] = 0x5;
+    			  send[1] = 'C';
+    			  (void)RAPP_SendPayloadDataBlock(send, sizeof(send), 0xAC, 0x12, RPHY_PACKET_FLAGS_REQ_ACK);
+    			  cSended = true;
+    			  SHELL_SendString("Send data C (stop) \r\n");
+    		  	  }
     		  LF_currState = STATE_FINISHED; /* stop if we do not have a line any more */
     		  SHELL_SendString((unsigned char*)"No line, stopped!\r\n");
     	  }
@@ -114,10 +122,7 @@ static void StateMachine(void) {
       break;
 
     case STATE_TURN:
-    	if(alreadyturned == false){
-    		alreadyturned = true;
-    		TURN_Turn(TURN_RIGHT180, NULL);
-    	}
+    	TURN_Turn(TURN_RIGHT180, NULL);
     	(void)xTaskNotify(LFTaskHandle, LF_START_FOLLOWING, eSetBits);
     	LF_currState = STATE_FOLLOW_SEGMENT;
       break;
