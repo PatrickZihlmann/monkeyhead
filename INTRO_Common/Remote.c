@@ -305,7 +305,7 @@ uint8_t REMOTE_HandleRemoteRxMessage(RAPP_MSG_Type type, uint8_t size, uint8_t *
 #endif
     case RAPP_MSG_TYPE_JOYSTICK_BTN:
       *handled = TRUE;
-      static int speedcontroller = 6000;
+      static int speedcontroller = 6400;
       static bool aSended = false;
       static bool tmpbool = false;
       static bool bSended = false;
@@ -355,12 +355,12 @@ uint8_t REMOTE_HandleRemoteRxMessage(RAPP_MSG_Type type, uint8_t size, uint8_t *
     	      DRV_SetSpeed(-speedcontroller,speedcontroller);
     	   }
       } else if (val==0x05) {  /* faster */
-    	  if (speedcontroller < 6000) {
-    	  speedcontroller = speedcontroller + 1040;
+    	  if (speedcontroller < 6400) {
+    	  speedcontroller = speedcontroller + 1120;
     	  }
       } else if (val==0x03) {  /* slower */
     	  if (speedcontroller > 800) {
-    	  speedcontroller = speedcontroller - 1040;
+    	  speedcontroller = speedcontroller - 1120;
     	  }
       } else if (val==0x04) { /* line follower */
     	  if (DRV_GetMode() == DRV_MODE_SPEED && tmpbool == false) {
