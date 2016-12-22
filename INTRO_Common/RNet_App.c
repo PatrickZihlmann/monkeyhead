@@ -26,7 +26,11 @@
   #include "Remote.h"
 #endif
 
-static RNWK_ShortAddrType APP_dstAddr = RNWK_ADDR_BROADCAST; /* destination node address */
+#if PL_LOCAL_CONFIG_BOARD_IS_REMOTE
+	static RNWK_ShortAddrType APP_dstAddr = 0x01; /* destination node address */
+#else
+	static RNWK_ShortAddrType APP_dstAddr = 0x02;
+#endif
 
 typedef enum {
   RNETA_NONE,
@@ -122,10 +126,17 @@ static void Process(void) {
 }
 
 static void Init(void) {
-  if (RAPP_SetThisNodeAddr(RNWK_ADDR_BROADCAST)!=ERR_OK) { /* set a default address */
-    //APP_DebugPrint((unsigned char*)"ERR: Failed setting node address\r\n");
-  }
+#if PL_LOCAL_CONFIG_BOARD_IS_REMOTE
+	if (RAPP_SetThisNodeAddr(0x02)!=ERR_OK) { /* set a default address */
+	    //APP_DebugPrint((unsigned char*)"ERR: Failed setting node address\r\n");
+	}
+#else
+	if (RAPP_SetThisNodeAddr(0x01)!=ERR_OK) { /* set a default address */
+		  //APP_DebugPrint((unsigned char*)"ERR: Failed setting node address\r\n");
+	}
+#endif
 }
+
 
 static void RadioTask(void *pvParameters) {
   (void)pvParameters; /* not used */
