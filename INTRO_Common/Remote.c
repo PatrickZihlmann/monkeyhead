@@ -146,15 +146,16 @@ static void RemoteTask (void *pvParameters) {
     	 data = 0x02;
      }else if(KEY3_Get()){
     	 data = 0x03;
-     }else if(KEY4_Get()){
-    	 data = 0x04;
      }else if(KEY5_Get()){
     	 data = 0x05;
      }else if(KEY6_Get()){
     	 data = 0x06;
      }else if(KEY7_Get()){
     	 data = 0x07;
+     }else if(KEY4_Get()){
+    	 data = 0x04;
      }
+
 
      (void)RAPP_SendPayloadDataBlock(&data, sizeof(data), RAPP_MSG_TYPE_JOYSTICK_BTN, RNETA_GetDestAddr(), RPHY_PACKET_FLAGS_REQ_ACK);
      LED1_Neg();
@@ -305,7 +306,7 @@ uint8_t REMOTE_HandleRemoteRxMessage(RAPP_MSG_Type type, uint8_t size, uint8_t *
 #endif
     case RAPP_MSG_TYPE_JOYSTICK_BTN:
       *handled = TRUE;
-      static int speedcontroller = 6400;
+      static int speedcontroller = 3000;
       static bool aSended = false;
       static bool tmpbool = false;
       static bool bSended = false;
@@ -331,7 +332,7 @@ uint8_t REMOTE_HandleRemoteRxMessage(RAPP_MSG_Type type, uint8_t size, uint8_t *
     	  tmpbool = false;
 
       } else if (val==0x07) { /* drive forward */
-    	  DRV_SetSpeed(-speedcontroller,-speedcontroller);
+    	  DRV_SetSpeed(speedcontroller,speedcontroller);
     	  SHELL_SendString("drive\r\n");
     	  if (!aSended) {
     	     aSended = true;
@@ -341,7 +342,7 @@ uint8_t REMOTE_HandleRemoteRxMessage(RAPP_MSG_Type type, uint8_t size, uint8_t *
     	     (void)RAPP_SendPayloadDataBlock(send, sizeof(send), 0xAC, 0x12, RPHY_PACKET_FLAGS_REQ_ACK);
     	     }
       } else if (val==0x06) { /* drive backward */
-    	  DRV_SetSpeed(speedcontroller,speedcontroller);
+    	  DRV_SetSpeed(-speedcontroller,-speedcontroller);
       } else if (val==0x01) { /* turn right */
     	  if(speedcontroller >= 2880){
     		DRV_SetSpeed(2500,-2500);
@@ -355,12 +356,12 @@ uint8_t REMOTE_HandleRemoteRxMessage(RAPP_MSG_Type type, uint8_t size, uint8_t *
     	      DRV_SetSpeed(-speedcontroller,speedcontroller);
     	   }
       } else if (val==0x05) {  /* faster */
-    	  if (speedcontroller < 6400) {
-    	  speedcontroller = speedcontroller + 1120;
+    	  if (speedcontroller < 3000) {
+    	  speedcontroller = speedcontroller + 440;
     	  }
       } else if (val==0x03) {  /* slower */
     	  if (speedcontroller > 800) {
-    	  speedcontroller = speedcontroller - 1120;
+    	  speedcontroller = speedcontroller - 440;
     	  }
       } else if (val==0x04) { /* line follower */
     	  if (DRV_GetMode() == DRV_MODE_SPEED && tmpbool == false) {
